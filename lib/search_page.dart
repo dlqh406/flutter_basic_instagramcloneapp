@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'create_page.dart';
+
 class SearchPage extends StatefulWidget {
   @override
   _SearchPageState createState() => _SearchPageState();
@@ -10,7 +12,11 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _buildBady(),
-      floatingActionButton: FloatingActionButton(onPressed: null,
+      floatingActionButton: FloatingActionButton(onPressed: (){
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => CreatPage()));
+        // 화면전환시 꼭 Navigator.push() 쓸것 !!!!
+      },
         child: Icon(Icons.create),
         backgroundColor: Colors.lightBlueAccent,
       ),
