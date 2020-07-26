@@ -15,7 +15,7 @@ class _SearchPageState extends State<SearchPage> {
       floatingActionButton: FloatingActionButton(onPressed: (){
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => CreatPage()));
-        // 화면전환시 꼭 Navigator.push() 쓸것 !!!!
+
       },
         child: Icon(Icons.create),
         backgroundColor: Colors.lightBlueAccent,
