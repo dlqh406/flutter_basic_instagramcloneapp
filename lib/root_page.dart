@@ -8,13 +8,15 @@ import 'package:flutter_basic_instacloneapp/tab_page.dart';
 class RootPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<FirebaseUser>(
-
+    return StreamBuilder <FirebaseUser>(
+      stream : FirebaseAuth.instance.onAuthStateChanged,
       builder: (BuildContext context, AsyncSnapshot snapshot){
         if(snapshot.hasData){
+          print("already logged in");
          return TabPage(snapshot.data);
         }
         else{
+          print("not logged");
           return LoginPage();
         }
       },

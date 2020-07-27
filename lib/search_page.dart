@@ -11,6 +11,7 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
       body: _buildBady(),
       floatingActionButton: FloatingActionButton(onPressed: (){
         Navigator.push(context,
