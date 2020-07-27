@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'search_page.dart';
 import 'account_page.dart';
 import 'home_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class TabPage extends StatefulWidget {
+  final FirebaseUser user;
+  TabPage(this.user);
+
   @override
   _TabPageState createState() => _TabPageState();
 }
