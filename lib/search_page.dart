@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_basic_instacloneapp/create_page.dart';
+//import 'package:instagram_clon/detail_post_page.dart';
+
 
 
 class SearchPage extends StatefulWidget {
@@ -29,20 +31,29 @@ class _SearchPageState extends State<SearchPage> {
   }
 
  Widget _buildBady() {
-    return GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          childAspectRatio: 1.0,
-          mainAxisSpacing: 1.0,
-          crossAxisSpacing: 1.0,
-
-        ),  itemCount: 5, itemBuilder: (context, index){
-          return _bulidListItem(context,index);
-    });
+  return StreamBuilder(
+    stream: Firestore.instance.collection('post').snapshots(),
+    builder: (BuildContext context, AsyncSnapshot snapshot){
+      if(!snapshot.hasData){
+        return Center(child:  CircularProgressIndicator());
+      }
+      var items =  snapshot.data?.documents ??[];
+      return GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              childAspectRatio: 1.0,
+              mainAxisSpacing: 1.0,
+              crossAxisSpacing: 1.0),
+          itemCount: items.length,
+          itemBuilder: (BuildContext context, int index) {return _buildListItem(context, items[index]);
+          });
+      },
+  );
  }
 
-  Widget _bulidListItem(BuildContext context, int index) {
-    return Image.network('https://s-i.huffpost.com/gen/3948866/thumbs/o-PEPE-THE-FROG-570.jpg?3',
+  Widget _buildListItem(context, document) {
+    return Image.network(
+        document['photoUrl'],
         fit : BoxFit.cover);
   }
 }
