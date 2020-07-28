@@ -1,62 +1,98 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-class CreatPage extends StatefulWidget {
+class CreatePage extends StatefulWidget {
+  final FirebaseUser user;
+  CreatePage(this.user);
+
   @override
-  _CreatPageState createState() => _CreatPageState();
+  _CreatePageState createState() => _CreatePageState();
 }
 
-class _CreatPageState extends State<CreatPage> {
+class _CreatePageState extends State<CreatePage> {
   final textEditingController = TextEditingController();
-  File _image;
 
   @override
   void dispose() {
     textEditingController.dispose();
     super.dispose();
-  }// textField에 필수적으로 들어가야함
+  }
+
+  File _image;
+
+  Future _getImage() async {
+    print('클릭 되나');
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      _image = image;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _buildAppBar(),
-      body: _buildBody(),
-      floatingActionButton: FloatingActionButton(onPressed: _getImage,
-      child: Icon(Icons.add_a_photo),
-      backgroundColor: Colors.lightBlueAccent,
-      ),);
-  }
+      appBar: AppBar(
+        title: Text('새 게시물'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.send),
+            tooltip: '다음',
+            onPressed: () {
+              print('클릭');
 
-  Widget _buildAppBar() {
-    return AppBar(
-      actions: <Widget>[
-        IconButton(
-          icon: Icon(Icons.send),
-          onPressed: (){},
-        )
-      ],
-    );
-  }
+              final firebaseStorageRef = FirebaseStorage.instance
+                  .ref()
+                  .child('post')
+                  .child('${DateTime.now().millisecondsSinceEpoch}.png');
 
-  Widget _buildBody() {
-    return SingleChildScrollView(
-      child: Column(
-        children: <Widget>[
-          Padding(padding: EdgeInsets.all(8.0)),
-         _image == null ? Text('업로드할 사진을 선택해주세요') : Image.file(_image),
-          TextField(
-            decoration: InputDecoration(hintText: '내용을 입력하세요'),
-            controller: textEditingController,
+              final task = firebaseStorageRef.putFile(
+                  _image, StorageMetadata(contentType: 'image/png'));
+
+              task.onComplete.then((value) {
+                var downloadUrl = value.ref.getDownloadURL();
+
+                downloadUrl.then((uri) {
+                  var doc = Firestore.instance.collection('post').document();
+                  doc.setData({
+                    'id': doc.documentID,
+                    'photoUrl': uri.toString(),
+                    'contents': textEditingController.text,
+                    'email': widget.user.email,
+                    'displayName': widget.user.displayName,
+                    'userPhotoUrl': widget.user.photoUrl
+                  }).then((onValue) {
+                    Navigator.pop(context);
+                  });
+                });
+              });
+            },
           )
         ],
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            _buildBody(),
+            TextField(
+              decoration: InputDecoration(hintText: '내용을 입력하세요'),
+              controller: textEditingController,
+            )
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _getImage,
+        child: Icon(Icons.add_a_photo),
       ),
     );
   }
 
-  Future _getImage() async {
-    File Image = await ImagePicker.pickImage(source: ImageSource.gallery);
-    setState(() {
-      _image = Image;
-    });
+  Widget _buildBody() {
+    return _image == null ? Text('No Image') : Image.file(_image);
   }
 }

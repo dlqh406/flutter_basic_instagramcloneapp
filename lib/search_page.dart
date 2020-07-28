@@ -1,8 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_basic_instacloneapp/create_page.dart';
 
-import 'create_page.dart';
 
 class SearchPage extends StatefulWidget {
+  final FirebaseUser user;
+  SearchPage(this.user);
+
   @override
   _SearchPageState createState() => _SearchPageState();
 }
@@ -15,7 +20,7 @@ class _SearchPageState extends State<SearchPage> {
       body: _buildBady(),
       floatingActionButton: FloatingActionButton(onPressed: (){
         Navigator.push(context,
-            MaterialPageRoute(builder: (context) => CreatPage()));
+            MaterialPageRoute(builder: (context) => CreatePage(widget.user)));
       },
         child: Icon(Icons.create),
         backgroundColor: Colors.lightBlueAccent,

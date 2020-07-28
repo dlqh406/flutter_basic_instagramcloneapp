@@ -21,11 +21,11 @@ class _TabPageState extends State<TabPage> {
     super.initState();
     _pages = [
       HomePage(widget.user),
-      SearchPage(),
+      SearchPage(widget.user),
       AccountPage(widget.user),
     ];
   }
- 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
