@@ -42,6 +42,7 @@ android {
         applicationId "com.example.flutter_basic_instacloneapp"
         minSdkVersion 21
         targetSdkVersion 28
+        multiDexEnabled true
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }

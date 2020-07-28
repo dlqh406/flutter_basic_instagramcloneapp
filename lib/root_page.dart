@@ -16,7 +16,7 @@ class RootPage extends StatelessWidget {
          return TabPage(snapshot.data);
         }
         else{
-          print("not logged");
+          print("not logged ");
           return LoginPage();
         }
       },
